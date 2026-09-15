@@ -36,7 +36,9 @@
 
 시스템 리졸버, Google(8.8.8.8), Quad9(9.9.9.9)를 비교한 결과, 이 규칙으로 CDN-hosted로 분류된 7개 사이트 중 7개가 서로 다른 resolver에 대해 다른 비어 있지 않은 IPv4 주소 집합을 반환했다. 이는 DNS 응답이 resolver 위치 또는 정책에 따라 달라질 수 있음을 뒷받침하지만, 반환된 복제본이 실제로 사용자에게 가장 가까운 서버임을 직접 증명하지는 않는다.
 
-
++Wireshark/tshark 4.6.8 환경에서 dns.flags.response 필드는 0/1이 아닌 False/True로 출력됩니다.
+따라서 실제 DNS query/response가 포함된 pcapng인데도 test_tasks.py가 0 queries, 0 responses로 판정되었습니다.
+제 캡처에서는 패킷 3→4가 delegation이고, 7→8이 최종 A 응답입니다.
 
 ## Task 3 — TTL Cache
 
