@@ -1,0 +1,480 @@
+{
+  "sites": {
+    "www.microsoft.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.microsoft.com",
+          "www.microsoft.com-c-3.edgekey.net",
+          "e13678.dscb.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.49.206.40"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.microsoft.com",
+          "www.microsoft.com-c-3.edgekey.net",
+          "e13678.dscb.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.49.206.40"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.microsoft.com",
+          "www.microsoft.com-c-3.edgekey.net",
+          "e13678.dscb.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.0.206.100"
+        ],
+        "error": null
+      }
+    },
+    "www.netflix.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.netflix.com",
+          "www.prod.ftl.netflix.com"
+        ],
+        "addresses": [
+          "207.45.72.1",
+          "207.45.73.1"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.netflix.com",
+          "www.prod.ftl.netflix.com"
+        ],
+        "addresses": [
+          "207.45.72.1",
+          "207.45.73.1"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.netflix.com",
+          "www.prod.ftl.netflix.com"
+        ],
+        "addresses": [
+          "207.45.72.1",
+          "207.45.73.1"
+        ],
+        "error": null
+      }
+    },
+    "www.adobe.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.adobe.com",
+          "www.adobe.com.edgesuite.net",
+          "a1319.dscr.akamai.net"
+        ],
+        "addresses": [
+          "23.76.153.115",
+          "23.76.153.121"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.adobe.com",
+          "www.adobe.com.edgesuite.net",
+          "a1319.dscr.akamai.net"
+        ],
+        "addresses": [
+          "23.76.153.115",
+          "23.76.153.121"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.adobe.com",
+          "www.adobe.com.edgesuite.net",
+          "a1319.dscr.akamai.net"
+        ],
+        "addresses": [
+          "23.62.21.101",
+          "23.62.21.104"
+        ],
+        "error": null
+      }
+    },
+    "www.cnn.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.cnn.com",
+          "cnn-tls.map.fastly.net"
+        ],
+        "addresses": [
+          "146.75.51.5"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.cnn.com",
+          "cnn-tls.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.131.5",
+          "151.101.195.5",
+          "151.101.3.5",
+          "151.101.67.5"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.cnn.com",
+          "cnn-tls.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.131.5",
+          "151.101.195.5",
+          "151.101.3.5",
+          "151.101.67.5"
+        ],
+        "error": null
+      }
+    },
+    "www.apple.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.apple.com",
+          "www-apple-com.v.aaplimg.com",
+          "www.apple.com.edgekey.net",
+          "e6858.dsce9.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.49.205.28"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.apple.com",
+          "www-apple-com.v.aaplimg.com",
+          "www.apple.com.edgekey.net",
+          "e6858.dsce9.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.49.205.28"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.apple.com",
+          "www-apple-com.v.aaplimg.com",
+          "www.apple.com.edgekey.net",
+          "e6858.dsce9.akamaiedge.net"
+        ],
+        "addresses": [
+          "23.217.69.53"
+        ],
+        "error": null
+      }
+    },
+    "www.korea.ac.kr": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.korea.ac.kr"
+        ],
+        "addresses": [
+          "163.152.6.10"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.korea.ac.kr"
+        ],
+        "addresses": [
+          "163.152.6.10"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.korea.ac.kr"
+        ],
+        "addresses": [
+          "163.152.6.10"
+        ],
+        "error": null
+      }
+    },
+    "www.stanford.edu": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.stanford.edu",
+          "stanford.netlifyglobalcdn.com"
+        ],
+        "addresses": [
+          "15.197.167.90",
+          "3.33.186.135"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.stanford.edu",
+          "stanford.netlifyglobalcdn.com"
+        ],
+        "addresses": [
+          "15.197.167.90",
+          "3.33.186.135"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.stanford.edu",
+          "stanford.netlifyglobalcdn.com"
+        ],
+        "addresses": [
+          "15.197.167.90",
+          "3.33.186.135"
+        ],
+        "error": null
+      }
+    },
+    "www.bbc.co.uk": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.bbc.co.uk",
+          "www.bbc.co.uk.pri.bbc.co.uk",
+          "bbc.map.fastly.net"
+        ],
+        "addresses": [
+          "146.75.48.81"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.bbc.co.uk",
+          "www.bbc.co.uk.pri.bbc.co.uk",
+          "bbc.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.0.81",
+          "151.101.128.81",
+          "151.101.192.81",
+          "151.101.64.81"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.bbc.co.uk",
+          "www.bbc.co.uk.pri.bbc.co.uk",
+          "bbc.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.0.81",
+          "151.101.128.81",
+          "151.101.192.81",
+          "151.101.64.81"
+        ],
+        "error": null
+      }
+    },
+    "www.spotify.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.spotify.com",
+          "atc.spotify.map.fastly.net"
+        ],
+        "addresses": [
+          "146.75.51.42"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.spotify.com",
+          "atc.spotify.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.131.42",
+          "151.101.195.42",
+          "151.101.3.42",
+          "151.101.67.42"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.spotify.com",
+          "atc.spotify.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.131.42",
+          "151.101.195.42",
+          "151.101.3.42",
+          "151.101.67.42"
+        ],
+        "error": null
+      }
+    },
+    "www.github.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.github.com",
+          "github.com"
+        ],
+        "addresses": [
+          "20.200.245.247"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.github.com",
+          "github.com"
+        ],
+        "addresses": [
+          "20.200.245.247"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.github.com",
+          "github.com"
+        ],
+        "addresses": [
+          "20.27.177.113"
+        ],
+        "error": null
+      }
+    },
+    "www.wikipedia.org": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.wikipedia.org",
+          "dyna.wikimedia.org"
+        ],
+        "addresses": [
+          "103.102.166.224"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.wikipedia.org",
+          "dyna.wikimedia.org"
+        ],
+        "addresses": [
+          "103.102.166.224"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.wikipedia.org",
+          "dyna.wikimedia.org"
+        ],
+        "addresses": [
+          "103.102.166.224"
+        ],
+        "error": null
+      }
+    },
+    "www.nytimes.com": {
+      "system": {
+        "resolver_ip": null,
+        "chain": [
+          "www.nytimes.com",
+          "www.prd.map.nytimes.com",
+          "www.prd.map.nytimes.xovr.nyt.net",
+          "nytimes.map.fastly.net"
+        ],
+        "addresses": [
+          "146.75.49.164"
+        ],
+        "error": null
+      },
+      "google": {
+        "resolver_ip": "8.8.8.8",
+        "chain": [
+          "www.nytimes.com",
+          "www.prd.map.nytimes.com",
+          "www.prd.map.nytimes.xovr.nyt.net",
+          "nytimes.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.1.164",
+          "151.101.129.164",
+          "151.101.193.164",
+          "151.101.65.164"
+        ],
+        "error": null
+      },
+      "quad9": {
+        "resolver_ip": "9.9.9.9",
+        "chain": [
+          "www.nytimes.com",
+          "www.prd.map.nytimes.com",
+          "www.prd.map.nytimes.xovr.nyt.net",
+          "nytimes.map.fastly.net"
+        ],
+        "addresses": [
+          "151.101.1.164",
+          "151.101.129.164",
+          "151.101.193.164",
+          "151.101.65.164"
+        ],
+        "error": null
+      }
+    }
+  },
+  "resolvers": {
+    "system": null,
+    "google": "8.8.8.8",
+    "quad9": "9.9.9.9"
+  }
+}
