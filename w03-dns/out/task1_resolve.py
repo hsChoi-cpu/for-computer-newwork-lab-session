@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Educational iterative DNS resolver: root -> TLD -> authoritative server."""
-
-from __future__ import annotations
+"""Week 3 · Task 1 — Build your own iterative resolver."""
 
 import argparse
 import ipaddress
 import subprocess
-from typing import Iterable
+import sys
 
 import dns.exception
 import dns.flags
@@ -16,170 +14,269 @@ import dns.query
 import dns.rdatatype
 
 
-# Start with literal root-server addresses so the first query needs no resolver.
+# Root servers. Everything starts here; there is no earlier step.
 ROOT_SERVERS = [
-    "198.41.0.4", "170.247.170.2", "192.33.4.12", "199.7.91.13",
-    "192.203.230.10", "192.5.5.241", "192.112.36.4", "198.97.190.53",
-    "192.36.148.17", "192.58.128.30", "193.0.14.129", "199.7.83.42",
-    "202.12.27.33",
+    "198.41.0.4",       # a.root-servers.net
+    "199.9.14.201",     # b.root-servers.net
+    "192.33.4.12",      # c.root-servers.net
+]
+
+# Stable names should normally match dig exactly.
+# Microsoft may return a CDN-dependent address.
+VERIFY_NAMES = [
+    ("www.korea.ac.kr", "stable"),
+    ("dns.google", "stable"),
+    ("en.wikipedia.org", "stable"),
+    ("www.stanford.edu", "stable"),
+    ("www.microsoft.com", "cdn"),
 ]
 
 
 class ResolutionError(RuntimeError):
-    pass
+    """The iterative DNS walk could not obtain an A record."""
 
 
 class Resolver:
-    def __init__(self, timeout: float = 2.0, max_depth: int = 30,
-                 max_cnames: int = 12) -> None:
+    """An iterative, non-recursive DNS A-record resolver."""
+
+    def __init__(self, timeout=2.0, max_depth=30, max_cnames=12):
         self.timeout = timeout
         self.max_depth = max_depth
         self.max_cnames = max_cnames
 
-    def _ask(self, server: str, name: str):
-        """Send a non-recursive A query to one candidate nameserver."""
+    def _ask(self, server, name):
+        """Ask exactly one server without allowing recursion."""
         query = dns.message.make_query(name, dns.rdatatype.A, use_edns=True)
-        query.flags &= ~dns.flags.RD       # equivalent to dig +norecurse
+        query.flags &= ~dns.flags.RD  # Equivalent to dig +norecurse.
         return dns.query.udp(query, server, timeout=self.timeout)
 
     @staticmethod
-    def _a_records(message, owner: dns.name.Name) -> list[str]:
-        return [record.address for rrset in message.answer
-                if rrset.rdtype == dns.rdatatype.A and rrset.name == owner
-                for record in rrset]
+    def _a_records(response, owner):
+        """Return A records whose owner is exactly the requested name."""
+        addresses = []
+
+        for rrset in response.answer:
+            if rrset.rdtype == dns.rdatatype.A and rrset.name == owner:
+                addresses.extend(record.address for record in rrset)
+
+        return addresses
 
     @staticmethod
-    def _cname_target(message, owner: dns.name.Name) -> str | None:
-        for rrset in message.answer:
+    def _cname_target(response, owner):
+        """Return the CNAME target for owner, if one was returned."""
+        for rrset in response.answer:
             if rrset.rdtype == dns.rdatatype.CNAME and rrset.name == owner:
                 return str(next(iter(rrset)).target)
+
         return None
 
     @staticmethod
-    def _referral_ns(message) -> list[str]:
-        return [str(record.target) for rrset in message.authority
-                if rrset.rdtype == dns.rdatatype.NS for record in rrset]
+    def _delegated_nameservers(response):
+        """Extract NS hostnames from the Authority section of a referral."""
+        nameservers = []
+
+        for rrset in response.authority:
+            if rrset.rdtype == dns.rdatatype.NS:
+                nameservers.extend(str(record.target) for record in rrset)
+
+        return nameservers
 
     @staticmethod
-    def _glue(message, ns_names: Iterable[str]) -> list[str]:
-        wanted = {dns.name.from_text(name) for name in ns_names}
-        return [record.address for rrset in message.additional
-                if rrset.rdtype == dns.rdatatype.A and rrset.name in wanted
-                for record in rrset]
+    def _glue_addresses(response, nameservers):
+        """Extract glue A records for the delegated nameservers."""
+        ns_names = {dns.name.from_text(server) for server in nameservers}
+        addresses = []
 
-    def resolve(self, name: str) -> tuple[str, list[str]]:
-        """Return (one IPv4 address, ordered list of queried DNS servers)."""
-        return self._resolve(dns.name.from_text(name).to_text(), 0, 0, set())
+        for rrset in response.additional:
+            if rrset.rdtype == dns.rdatatype.A and rrset.name in ns_names:
+                addresses.extend(record.address for record in rrset)
 
-    def _resolve(self, name: str, depth: int, cname_count: int,
-                 seen: set[str]) -> tuple[str, list[str]]:
+        return addresses
+
+    def resolve(self, name):
+        """
+        Resolve name iteratively.
+
+        Returns:
+            (address, path)
+
+        address is the final A-record string.
+        path is the ordered list of DNS server IPs queried.
+        """
+        normalized_name = dns.name.from_text(name).to_text()
+
+        return self._resolve(
+            normalized_name,
+            depth=0,
+            cname_count=0,
+            seen_names=set(),
+        )
+
+    def _resolve(self, name, depth, cname_count, seen_names):
+        """Perform one complete root-to-authoritative walk."""
         if depth >= self.max_depth:
-            raise ResolutionError("maximum DNS delegation depth reached")
-        if name in seen:
+            raise ResolutionError("maximum delegation depth reached")
+
+        if name in seen_names:
             raise ResolutionError(f"DNS loop detected at {name}")
 
-        seen = seen | {name}
-        candidates = list(ROOT_SERVERS)
-        path: list[str] = []
+        seen_names = seen_names | {name}
         owner = dns.name.from_text(name)
+        candidates = list(ROOT_SERVERS)
+        path = []
 
         while candidates:
             if depth >= self.max_depth:
-                raise ResolutionError("maximum DNS delegation depth reached")
-            depth += 1
-            next_candidates: list[str] = []
+                raise ResolutionError("maximum delegation depth reached")
 
-            # If a server times out or fails, continue with the next NS server.
+            depth += 1
+            next_candidates = []
+
+            # Try every available server. A timeout must not end the walk.
             for server in candidates:
                 try:
                     ipaddress.ip_address(server)
                     response = self._ask(server, name)
                     path.append(server)
-                except (ValueError, OSError, dns.exception.DNSException):
+                except (
+                    ValueError,
+                    OSError,
+                    dns.exception.DNSException,
+                ):
                     continue
 
+                # An authoritative answer contains the requested A record.
                 addresses = self._a_records(response, owner)
                 if addresses:
                     return addresses[0], path
 
+                # A CNAME requires a fresh root walk for its target.
                 target = self._cname_target(response, owner)
-                if target:
+                if target is not None:
                     if cname_count >= self.max_cnames:
                         raise ResolutionError("maximum CNAME depth reached")
+
                     address, cname_path = self._resolve(
-                        target, depth, cname_count + 1, seen
+                        target,
+                        depth=depth,
+                        cname_count=cname_count + 1,
+                        seen_names=seen_names,
                     )
                     return address, path + cname_path
 
-                ns_names = self._referral_ns(response)
-                if not ns_names:
+                # A referral supplies NS names in Authority.
+                nameservers = self._delegated_nameservers(response)
+                if not nameservers:
                     continue
 
-                glue = self._glue(response, ns_names)
+                glue = self._glue_addresses(response, nameservers)
+
                 if glue:
                     next_candidates.extend(glue)
                 else:
-                    # No glue: recursively perform a separate root walk for
-                    # each NS hostname, then use the discovered address(es).
-                    for ns_name in ns_names:
+                    # No glue: first resolve each NS hostname through another
+                    # iterative root walk, then ask its discovered IP address.
+                    for ns_name in nameservers:
                         try:
-                            ns_ip, ns_path = self._resolve(ns_name, depth, 0, seen)
+                            ns_address, ns_path = self._resolve(
+                                ns_name,
+                                depth=depth,
+                                cname_count=0,
+                                seen_names=seen_names,
+                            )
                             path.extend(ns_path)
-                            next_candidates.append(ns_ip)
+                            next_candidates.append(ns_address)
                         except ResolutionError:
                             continue
+
                 if next_candidates:
                     break
 
+            # Remove duplicates while preserving nameserver order.
             candidates = list(dict.fromkeys(next_candidates))
 
         raise ResolutionError(f"could not resolve {name} iteratively")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Iterative, non-recursive DNS A lookup")
+# ------------------------------------------------------------------- harness
+
+def dig_answer(name):
+    """Obtain A records from dig only for verification."""
+    try:
+        result = subprocess.run(
+            ["dig", "+short", name, "A"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        raise RuntimeError("dig is required for --verify") from exc
+
+    answers = []
+
+    for line in result.stdout.splitlines():
+        value = line.strip()
+
+        try:
+            ipaddress.IPv4Address(value)
+            answers.append(value)
+        except ipaddress.AddressValueError:
+            pass
+
+    return answers
+
+
+def verify():
+    resolver = Resolver()
+    failures = 0
+
+    for name, kind in VERIFY_NAMES:
+        try:
+            address, path = resolver.resolve(name)
+            expected = dig_answer(name)
+        except Exception as exc:
+            print(f"  FAIL  {name:<22} your resolver raised {exc!r}")
+            failures += 1
+            continue
+
+        if address in expected:
+            status = "ok"
+            note = ""
+        elif kind == "cdn":
+            status = "ok"
+            note = "  <- CDN/load-balanced answer differed; document this."
+        else:
+            status = "FAIL"
+            note = "  <- should have matched"
+            failures += 1
+
+        print(
+            f"  {status:<5} {name:<22} "
+            f"you={address:<16} "
+            f"dig={','.join(expected) or '-':<16} "
+            f"hops={len(path)}{note}"
+        )
+
+    print(f"\n  {len(VERIFY_NAMES) - failures}/{len(VERIFY_NAMES)} ok")
+    return 1 if failures else 0
+
+
+def main():
+    parser = argparse.ArgumentParser()
     parser.add_argument("name", nargs="?", default="www.korea.ac.kr")
     parser.add_argument("--verify", action="store_true")
     args = parser.parse_args()
-    names = (["www.korea.ac.kr", "www.example.com", "www.iana.org",
-              "www.wikipedia.org", "www.cloudflare.com"] if args.verify else [args.name])
 
-    resolver = Resolver()
-    failed = False
-    for name in names:
-        try:
-            address, path = resolver.resolve(name)
-            if args.verify:
-                # dig is used only as an independent check, never to perform
-                # the iterative walk above.
-                completed = subprocess.run(
-                    ["dig", "+short", name, "A"], text=True,
-                    capture_output=True, check=False
-                )
-                dig_addresses = [line.strip() for line in completed.stdout.splitlines()
-                                 if line.strip() and _is_ipv4(line.strip())]
-                if not dig_addresses:
-                    raise ResolutionError("dig verification returned no A record")
-                status = "ok" if address in dig_addresses else "note"
-                print(f"{status:<5} {name:<25} you={address:<15} "
-                      f"dig={dig_addresses[0]:<15} hops={len(path)}")
-                if status == "note":
-                    print("      different CDN/load-balanced answer; record this in observation.md")
-            else:
-                print(f"ok    {name:<25} you={address:<15} hops={len(path)}")
-            print("      " + " -> ".join(path))
-        except (OSError, ResolutionError) as exc:
-            failed = True
-            print(f"fail  {name}: {exc}")
-    return int(failed)
+    if args.verify:
+        sys.exit(verify())
 
+    address, path = Resolver().resolve(args.name)
 
-def _is_ipv4(value: str) -> bool:
-    try:
-        return isinstance(ipaddress.ip_address(value), ipaddress.IPv4Address)
-    except ValueError:
-        return False
+    for index, server in enumerate(path, 1):
+        print(f"  {index}. asked {server}")
+
+    print(f"\n  {args.name} -> {address}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()
