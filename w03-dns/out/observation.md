@@ -40,6 +40,8 @@
 따라서 실제 DNS query/response가 포함된 pcapng인데도 test_tasks.py가 0 queries, 0 responses로 판정되었습니다.
 제 캡처에서는 패킷 3→4가 delegation이고, 7→8이 최종 A 응답입니다.
 
+<img width="1271" height="260" alt="image" src="https://github.com/user-attachments/assets/ce5f71e2-deda-4fcb-a9c2-be5079ea66c4" />
+
 ## Task 3 — TTL Cache
 
 
