@@ -1,8 +1,8 @@
-\# Week 3 Observation
+# Week 3 Observation
 
 
 
-\## Task 1 — Iterative DNS Resolver
+## Task 1 — Iterative DNS Resolver
 
 
 
@@ -18,7 +18,7 @@
 
 
 
-\## Task 2 — DNS Steering and Capture
+## Task 2 — DNS Steering and Capture
 
 
 
@@ -38,7 +38,7 @@
 
 
 
-\## Task 3 — TTL Cache
+## Task 3 — TTL Cache
 
 
 
