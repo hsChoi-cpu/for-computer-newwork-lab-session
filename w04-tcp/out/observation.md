@@ -1,4 +1,6 @@
-Task 1 — Reliable delivery
+# Week 4 Observation
+
+## Task 1 — Reliable delivery
 
 Stop-and-wait를 선택했다. ACK도 손실되거나 중복될 수 있으므로 현재 조각의 번호와 일치하는 ACK만 인정하고, 수신자는 중복 데이터가 도착해도 한 번만 이어 붙였다.
 
@@ -6,7 +8,7 @@ Stop-and-wait를 선택했다. ACK도 손실되거나 중복될 수 있으므로
 
 가장 주의한 사례는 ACK 손실로 재전송된 데이터가 수신자에 중복 도착하는 경우였다. 수신자가 이미 처리한 번호의 데이터는 다시 추가하지 않고 ACK만 재전송하도록 하여 중복으로 인한 출력 손상을 방지했다.
 
-Task 2 — Link measurement and TCP handshake
+## Task 2 — Link measurement and TCP handshake
 
 캡처의 동일 연결에서 SYN #1, SYN-ACK #2, ACK #3를 확인했다. 클라이언트·서버의 실제 초기 시퀀스 번호는 각각 2299513837, 3658326912이며, 연결 간 오래된 세그먼트와 혼동되지 않도록 임의의 초기값을 사용한다(상대 시퀀스 번호 0과 구별).  
 
@@ -14,7 +16,7 @@ SYN 옵션은 MSS 1460바이트, window scale 8(배율 256), SACK permitted Yes�
 
 campus wifi의 처리량 중앙값 65.886Mbps(범위 44.998–73.826), 핸드셰이크 중앙값 9.699ms; tethering은 50.622Mbps(범위 42.034–57.136), 35.131ms였다. 회차별 차이는 무선 채널 경쟁, 간섭, 네트워크 혼잡, 패킷 손실·재전송, AP 또는 기지국의 순간적인 부하와 같은 네트워크 상태 변화에 따른 것으로 볼 수 있으며, RTT가 길면 ACK 회수와 혼잡 윈도 증가가 느려져 짧은 전송의 처리량을 낮출 수 있다.
 
-Task 3 — Congestion control
+## Task 3 — Congestion control
 
 고정 윈도는 goodput 986.8로 가장 높지만 손실률 37.4%, 평균 큐 8.8패킷, 재전송 2,340회로 대역폭을 낭비하고 다른 흐름의 대기 시간도 늘린다.
 
