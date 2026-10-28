@@ -1,4 +1,4 @@
-# Week 7
+# Week 07 Observation
 
 ## Task 1 — Learning Switch
 
